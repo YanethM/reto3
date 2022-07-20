@@ -1,26 +1,46 @@
 package Vistas;
 
+import Controlador.*;
 import Modelo.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
 public class AddUserForm extends javax.swing.JDialog {
+
     ComboBoxModel enumTipoDocumento;
     Conexion conexion = new Conexion();
     Connection connection;
     Statement st;
     ResultSet rs;
+    CbSucursal cbSucursales;
+    ArrayList mListaSucursales;
 
     public AddUserForm(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         enumTipoDocumento = new DefaultComboBoxModel(EnumTipoDocumento.values());
         initComponents();
         this.setLocationRelativeTo(parent);
+        cbSucursales = new CbSucursal();
+        mListaSucursales = new ArrayList();
+        llenarComboboxSucursales();
+    }
+
+    public void llenarComboboxSucursales() {
+        mListaSucursales = cbSucursales.getListaSucursales();
+        Iterator iterator = mListaSucursales.iterator();
+        while (iterator.hasNext()) {
+            //Verifica si el contenido del arrayList es un objeto
+            //Verifica si el objeto es de tipo sucursal
+            Sucursal sucursal = (Sucursal) iterator.next();
+            cbSucursal.addItem(sucursal);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -43,7 +63,7 @@ public class AddUserForm extends javax.swing.JDialog {
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
-        cbTipoDocumento1 = new javax.swing.JComboBox<>();
+        cbSucursal = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -90,7 +110,7 @@ public class AddUserForm extends javax.swing.JDialog {
 
         jLabel8.setText("Formulario de empleados");
 
-        jLabel9.setText("Departamento");
+        jLabel9.setText("Sucursal");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -131,7 +151,7 @@ public class AddUserForm extends javax.swing.JDialog {
                                 .addGap(30, 30, 30)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txtCorreo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cbTipoDocumento1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(cbSucursal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(91, 91, 91)))
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(79, Short.MAX_VALUE))
@@ -176,7 +196,7 @@ public class AddUserForm extends javax.swing.JDialog {
                         .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cbTipoDocumento1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbSucursal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -212,34 +232,33 @@ public class AddUserForm extends javax.swing.JDialog {
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         String nombre = txtNombre.getText();
         String apellidos = txtApellidos.getText();
-        // | C.C. | C.E. | L.M. | P. | Otro |
-        //Valor de  la lista desplegable que se selecciono
-        String tipoDocumento =cbTipoDocumento.getSelectedItem().toString();
-        //Posicion de la lista desplegable seleccionada
-        int posicionLista = cbTipoDocumento.getSelectedIndex();
+        String tipoDocumento = cbTipoDocumento.getSelectedItem().toString();
         String documento = txtDocumento.getText();
         String correo = txtCorreo.getText();
+        String sucursal = cbSucursal.getSelectedItem().toString();
 
-        //Validamos que se capture correctamente la información
-        System.out.println("nombre: " + nombre + " " + apellidos
-                + ", documento: " + tipoDocumento + " " + documento
-                + ", correo: " + correo);
-
-        //Validamos que todos los campos del formulario hubiesen sido diligenciados
         if (nombre.isEmpty() || apellidos.isEmpty() || documento.isEmpty() || correo.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Faltan campos por diligenciar.", "Registro", JOptionPane.WARNING_MESSAGE);
         } else {
-            String query = "INSERT INTO `empleado`(`nombreEmp`, `apellidos`, `tipoDocumento`, `documento`, `correo`, `FK_idDependencia`) VALUES ('"
-                    + nombre + "','" + apellidos + "','" + tipoDocumento + "','" + documento + "','" + correo + "')";
-            try{
+            String queryIdSucursal = "SELECT idSucursal FROM sucursal INNER JOIN empleado ON sucursal.idSucursal = empleado.FK_idSucursal;";
+            try {
                 connection = conexion.getConnection();
                 st = connection.createStatement();
-                //el executeUpdate se utiliza para las funciones de:
-                //Crear, eliminar y actualizar la información de los empleados
-                st.executeUpdate(query);
-                JOptionPane.showMessageDialog(this, "El usuario ha sido registrado");
-            }catch(SQLException e){
-               JOptionPane.showMessageDialog(this, "El usuario no ha sido creado", "Empleados", JOptionPane.ERROR_MESSAGE);
+                rs = st.executeQuery(queryIdSucursal);
+                while (rs.next()) {
+                    int idSucursal = rs.getInt("idSucursal");
+                    String query = "INSERT INTO `empleado`(`nombreEmp`, `apellidos`, `tipoDocumento`, `documento`, `correo`, `FK_idSucursal`) VALUES ('"
+                            + nombre + "','" + apellidos + "','" + tipoDocumento + "','" + documento + "','" + correo + "'," + idSucursal + ")";
+                    System.out.println(query);
+                    try {
+                        st.executeUpdate(query);
+                        JOptionPane.showMessageDialog(this, "El usuario ha sido registrado");
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(this, "El usuario no ha sido creado", "Empleados", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } catch (SQLException e) {
+                System.out.println(e);
             }
             this.dispose();
         }
@@ -294,8 +313,8 @@ public class AddUserForm extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnGuardar;
+    private javax.swing.JComboBox<Sucursal> cbSucursal;
     private javax.swing.JComboBox<String> cbTipoDocumento;
-    private javax.swing.JComboBox<String> cbTipoDocumento1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

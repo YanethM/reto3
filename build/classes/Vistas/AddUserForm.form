@@ -93,7 +93,7 @@
                                   <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="txtCorreo" alignment="1" min="-2" pref="332" max="-2" attributes="0"/>
-                                      <Component id="cbTipoDocumento1" alignment="1" min="-2" pref="332" max="-2" attributes="0"/>
+                                      <Component id="cbSucursal" alignment="1" min="-2" pref="332" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -156,7 +156,7 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="cbTipoDocumento1" min="-2" max="-2" attributes="0"/>
+                      <Component id="cbSucursal" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="50" max="32767" attributes="0"/>
@@ -257,19 +257,19 @@
             <Property name="text" type="java.lang.String" value="Formulario de empleados"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JComboBox" name="cbTipoDocumento1">
+        <Component class="javax.swing.JComboBox" name="cbSucursal">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="0"/>
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Sucursal&gt;"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel9">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Departamento"/>
+            <Property name="text" type="java.lang.String" value="Sucursal"/>
           </Properties>
         </Component>
       </SubComponents>

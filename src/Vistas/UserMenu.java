@@ -1,5 +1,8 @@
 package Vistas;
 
+import Controlador.EnumTipoCalle;
+import Controlador.EnumDepartamento;
+import Controlador.EnumZona;
 import Modelo.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -89,7 +92,7 @@ public class UserMenu extends javax.swing.JFrame {
         String filtroBusqueda = txtSearch.getText();
         //Si no hay nada en el campo de búsqueda se cargaran todos los empleados
         if (filtroBusqueda.isEmpty()) {
-            String query = "SELECT * FROM empleado";
+            String query = "SELECT nombreEmp, apellidos, tipoDocumento, documento, correo, nombreSucursal FROM empleado INNER JOIN sucursal ON empleado.FK_idSucursal = sucursal.idSucursal;";
             try {
                 connection = conexion.getConnection();
                 //Creamos la consulta query para la base de datos
@@ -101,25 +104,21 @@ public class UserMenu extends javax.swing.JFrame {
                 //El resultado de la consulta del query nos determinara la cantidad
                 // de empleados que existen
                 while (rs.next()) {
-                    empleado[0] = rs.getInt("idEmp");
-                    empleado[1] = rs.getString("nombreEmp");
-                    empleado[2] = rs.getString("apellidos");
-                    empleado[3] = rs.getString("tipoDocumento");
-                    empleado[4] = rs.getString("documento");
-                    empleado[5] = rs.getString("correo");
-                    empleado[6] = rs.getString("FK_idDependencia");
+                    empleado[0] = rs.getString("nombreEmp");
+                    empleado[1] = rs.getString("apellidos");
+                    empleado[2] = rs.getString("tipoDocumento");
+                    empleado[3] = rs.getString("documento");
+                    empleado[4] = rs.getString("correo");
+                    empleado[5] = rs.getString("nombreSucursal");
                     //En la tabla creamos una nueva fila con los 5 atributos del objeto empleaod
                     contenidoTablaEmpleados.addRow(empleado);
                     tblEmpleados.setModel(contenidoTablaEmpleados);
-                    System.out.println("idEmp: " + empleado[0] + ", nombre: " + empleado[1] + " "
-                            + ", documento: " + empleado[2] + " " + empleado[3]
-                            + ", correo: " + empleado[4]);
                 }
             } catch (SQLException e) {
                 System.out.println("No se pudo cargar información de los empleados");
             }
         } else {
-            String query = "SELECT * FROM empleado WHERE nombreEmp like '%" + filtroBusqueda + "%' OR apellidos like '%" + filtroBusqueda + "%' OR documento like '%" + filtroBusqueda + "%';";
+            String query = "SELECT nombreEmp, apellidos, tipoDocumento, documento, correo, nombreSucursal FROM empleado INNER JOIN sucursal WHERE empleado.FK_idSucursal = sucursal.idSucursal AND nombreEmp like '%" + filtroBusqueda + "%' OR apellidos like '%" + filtroBusqueda + "%' OR documento like '%" + filtroBusqueda + "%';";
             System.out.println(filtroBusqueda + "\n" + query);
             try {
                 connection = conexion.getConnection();
@@ -127,24 +126,20 @@ public class UserMenu extends javax.swing.JFrame {
                 st = connection.createStatement();
                 rs = st.executeQuery(query);
                 //Asignar en un objeto los datos que devuelve de cada registro
-                Object[] empleado = new Object[7];
+                Object[] empleado = new Object[6];
                 contenidoTablaEmpleados = (DefaultTableModel) tblEmpleados.getModel();
                 //El resultado de la consulta del query nos determinara la cantidad
                 // de empleados que existen
                 while (rs.next()) {
-                    empleado[0] = rs.getInt("idEmp");
-                    empleado[1] = rs.getString("nombreEmp");
-                    empleado[2] = rs.getString("apellidos");
-                    empleado[3] = rs.getString("tipoDocumento");
-                    empleado[4] = rs.getString("documento");
-                    empleado[5] = rs.getString("correo");
-                    empleado[6] = rs.getString("FK_idDependencia");
+                    empleado[0] = rs.getString("nombreEmp");
+                    empleado[1] = rs.getString("apellidos");
+                    empleado[2] = rs.getString("tipoDocumento");
+                    empleado[3] = rs.getString("documento");
+                    empleado[4] = rs.getString("correo");
+                    empleado[5] = rs.getString("nombreSucursal");
                     //En la tabla creamos una nueva fila con los 5 atributos del objeto empleaod
                     contenidoTablaEmpleados.addRow(empleado);
                     tblEmpleados.setModel(contenidoTablaEmpleados);
-                    System.out.println("idEmp: " + empleado[0] + ", nombre: " + empleado[1] + " "
-                            + ", documento: " + empleado[2] + " " + empleado[3]
-                            + ", correo: " + empleado[4]);
                 }
             } catch (SQLException e) {
                 System.out.println("No se pudo cargar información de los empleados");
@@ -403,11 +398,11 @@ public class UserMenu extends javax.swing.JFrame {
 
             },
             new String [] {
-                "IdEmp", "Nombre", "Apellido(s)", "Tipo documento", "Documento", "Correo", "idDependencia"
+                "Nombre", "Apellido(s)", "Tipo documento", "Documento", "Correo", "Sucursal"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, true
+                false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {

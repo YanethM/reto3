@@ -1,4 +1,4 @@
-package Modelo;
+package Controlador;
 
 public enum EnumZona {
     SeleccionaUnaOpción,
