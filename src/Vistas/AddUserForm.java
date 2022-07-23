@@ -36,8 +36,6 @@ public class AddUserForm extends javax.swing.JDialog {
         mListaSucursales = cbSucursales.getListaSucursales();
         Iterator iterator = mListaSucursales.iterator();
         while (iterator.hasNext()) {
-            //Verifica si el contenido del arrayList es un objeto
-            //Verifica si el objeto es de tipo sucursal
             Sucursal sucursal = (Sucursal) iterator.next();
             cbSucursal.addItem(sucursal);
         }
@@ -230,17 +228,19 @@ public class AddUserForm extends javax.swing.JDialog {
     }//GEN-LAST:event_txtApellidosActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        System.out.println("Di clic en el botón");
         String nombre = txtNombre.getText();
         String apellidos = txtApellidos.getText();
         String tipoDocumento = cbTipoDocumento.getSelectedItem().toString();
         String documento = txtDocumento.getText();
         String correo = txtCorreo.getText();
         String sucursal = cbSucursal.getSelectedItem().toString();
-
+        System.out.println(nombre +" "+apellidos +" "+ tipoDocumento +" "+ documento +" "+ correo+" "+ sucursal) ;
         if (nombre.isEmpty() || apellidos.isEmpty() || documento.isEmpty() || correo.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Faltan campos por diligenciar.", "Registro", JOptionPane.WARNING_MESSAGE);
         } else {
-            String queryIdSucursal = "SELECT idSucursal FROM sucursal INNER JOIN empleado ON sucursal.idSucursal = empleado.FK_idSucursal;";
+            String queryIdSucursal = "SELECT idSucursal FROM sucursal WHERE nombreSucursal = '"+sucursal+"';";
+            System.out.println(queryIdSucursal);
             try {
                 connection = conexion.getConnection();
                 st = connection.createStatement();
